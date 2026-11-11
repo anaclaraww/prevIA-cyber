@@ -1,0 +1,27 @@
+meta {
+  name: Criar quadra (logradouro via ViaCEP)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/quadras
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "nome": "Quadra Avenida Paulista",
+    "bairroId": "{{novoBairroId}}",
+    "cep": "01310-100",
+    "numero": "1578",
+    "latitude": -23.5614,
+    "longitude": -46.6559,
+    "capacidadeM3": 380
+  }
+}
+
+tests {
+  test('logradouro do ViaCEP', () => expect(res.getBody().logradouro).to.eql('Avenida Paulista'));
+}

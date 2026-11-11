@@ -1,0 +1,22 @@
+meta {
+  name: 400 · CEP inexistente
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/quadras
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "nome": "Quadra X",
+    "bairroId": "{{bairroId}}",
+    "cep": "99999-999",
+    "latitude": -23.5,
+    "longitude": -46.6,
+    "capacidadeM3": 100
+  }
+}

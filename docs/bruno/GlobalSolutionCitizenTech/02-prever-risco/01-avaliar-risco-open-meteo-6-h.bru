@@ -1,0 +1,20 @@
+meta {
+  name: Avaliar risco (Open-Meteo, 6 h)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bairros/{{bairroId}}/avaliar-risco?horas=6
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenOperador}}
+}
+
+tests {
+  test('200', () => expect(res.getStatus()).to.equal(200));
+  test('2 entupimentos considerados', () => expect(res.getBody().avaliacao.entupimentosAbertos).to.eql(2));
+}

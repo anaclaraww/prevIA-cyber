@@ -1,0 +1,15 @@
+meta {
+  name: 401 · sem token
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bairros
+  body: none
+  auth: none
+}
+
+tests {
+  test('401 UNAUTHORIZED_ACCESS', () => { expect(res.getStatus()).to.equal(401); expect(res.getBody().errorCode).to.eql('UNAUTHORIZED_ACCESS'); });
+}

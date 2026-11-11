@@ -1,0 +1,25 @@
+meta {
+  name: Boca de lobo 92% → missão pendente
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/sensores/{{bl2}}/leituras
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenSensor}}
+}
+
+body:json {
+  {
+    "valor": 92
+  }
+}
+
+tests {
+  test('aguardando robô', () => expect(res.getBody().acoesExecutadas[0]).to.include('aguardando robô'));
+}

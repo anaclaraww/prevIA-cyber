@@ -1,0 +1,27 @@
+meta {
+  name: Obter token (Operador / Defesa Civil)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/auth/token
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "clientId": "{{operadorId}}",
+    "clientSecret": "{{operadorSecret}}"
+  }
+}
+
+script:post-response {
+  bru.setVar('tokenOperador', res.getBody().accessToken);
+}
+
+tests {
+  test('200', () => expect(res.getStatus()).to.equal(200));
+  test('perfil Operador', () => expect(res.getBody().perfil).to.eql('Operador'));
+}

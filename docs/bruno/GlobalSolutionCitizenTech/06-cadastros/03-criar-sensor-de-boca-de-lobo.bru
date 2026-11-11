@@ -1,0 +1,29 @@
+meta {
+  name: Criar sensor de boca de lobo
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/sensores
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "codigo": "BL-BV-{{sufixo}}",
+    "tipo": "BocaDeLobo",
+    "bairroId": "{{novoBairroId}}",
+    "limiar": 70
+  }
+}
+
+vars:pre-request {
+  sufixo: 123456
+  novoBairroId: c0816aec-ab65-44f3-98fc-96e6fb76c800
+}
+
+script:pre-request {
+  bru.setVar("sufixo", Math.floor(Math.random() * 90000) + 10000);
+}

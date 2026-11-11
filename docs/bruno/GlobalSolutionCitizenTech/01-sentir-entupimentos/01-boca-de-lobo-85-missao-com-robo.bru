@@ -1,0 +1,26 @@
+meta {
+  name: Boca de lobo 85% → missão com robô
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/sensores/{{bl1}}/leituras
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenSensor}}
+}
+
+body:json {
+  {
+    "valor": 85
+  }
+}
+
+tests {
+  test('201', () => expect(res.getStatus()).to.equal(201));
+  test('robô despachado', () => expect(res.getBody().acoesExecutadas[0]).to.include('atribuída ao robô'));
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Fila de missões
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/missoes?bairroId={{bairroId}}
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  const m = res.getBody().find(x => x.status === 'EmAndamento');
+  bru.setVar('missaoId', m.id);
+}

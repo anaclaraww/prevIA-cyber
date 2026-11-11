@@ -1,0 +1,21 @@
+meta {
+  name: 409 · transição de status inválida
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/quadras/{{quadraId}}/status
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status": "Esvaziando"
+  }
+}
+
+tests {
+  test('409', () => expect(res.getStatus()).to.equal(409));
+}

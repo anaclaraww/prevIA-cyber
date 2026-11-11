@@ -1,0 +1,30 @@
+meta {
+  name: 403 · sensor tentando cadastrar bairro
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/bairros
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenSensor}}
+}
+
+body:json {
+  {
+    "nome": "Bairro Indevido",
+    "cidade": "São Paulo",
+    "uf": "SP",
+    "latitude": -23.5,
+    "longitude": -46.6,
+    "limiarChuvaMm": 20
+  }
+}
+
+tests {
+  test('403 FORBIDDEN', () => { expect(res.getStatus()).to.equal(403); expect(res.getBody().errorCode).to.eql('FORBIDDEN'); });
+}

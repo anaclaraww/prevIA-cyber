@@ -1,0 +1,16 @@
+meta {
+  name: Executar um ciclo de simulação
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/simulador/ciclo
+  body: none
+  auth: inherit
+}
+
+tests {
+  test('200', () => expect(res.getStatus()).to.equal(200));
+  test('gerou leituras', () => expect(res.getBody().leituras.length).to.be.above(0));
+}

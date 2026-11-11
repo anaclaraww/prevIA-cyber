@@ -1,0 +1,15 @@
+meta {
+  name: 404 · robô inexistente
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/robos/00000000-0000-0000-0000-000000000000
+  body: none
+  auth: inherit
+}
+
+tests {
+  test('404', () => expect(res.getStatus()).to.equal(404));
+}

@@ -1,0 +1,19 @@
+meta {
+  name: 403 · operador tentando rodar o simulador
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/simulador/ciclo
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenOperador}}
+}
+
+tests {
+  test('403', () => expect(res.getStatus()).to.equal(403));
+}

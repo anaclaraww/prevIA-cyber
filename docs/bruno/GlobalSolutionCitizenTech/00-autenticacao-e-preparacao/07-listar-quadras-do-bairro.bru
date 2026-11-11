@@ -1,0 +1,16 @@
+meta {
+  name: Listar quadras do bairro
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/v1/quadras?bairroId={{bairroId}}
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  const q = res.getBody().find(x => x.nome === 'Quadra Poliesportiva Pantanal');
+  bru.setVar('quadraId', q.id);
+}

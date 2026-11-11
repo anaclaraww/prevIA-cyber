@@ -1,0 +1,857 @@
+{
+  "info": {
+    "name": "GlobalSolutionCitizenTech API",
+    "description": "Cenário de chuva forte + cadastros, segurança e simulador. Rode as pastas na ordem (Collection Runner) com o banco recém-criado pelo seed: `docker compose down -v && docker compose up -d --build`. A primeira requisição obtém um token de Admin e o guarda em {{token}}; a coleção inteira usa esse Bearer.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "adminId",
+      "value": "admin"
+    },
+    {
+      "key": "adminSecret",
+      "value": "admin-demo-2026"
+    },
+    {
+      "key": "operadorId",
+      "value": "defesa-civil"
+    },
+    {
+      "key": "operadorSecret",
+      "value": "defesa-civil-demo-2026"
+    },
+    {
+      "key": "sensorId",
+      "value": "sensor-gateway"
+    },
+    {
+      "key": "sensorSecret",
+      "value": "sensor-gateway-demo-2026"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Autenticação e preparação",
+      "item": [
+        {
+          "name": "Health check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('API e banco no ar', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Obter token (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.test('perfil Admin', () => pm.expect(pm.response.json().perfil).to.eql('Admin'));",
+                  "pm.collectionVariables.set('token', pm.response.json().accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/token",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{adminId}}\",\n  \"clientSecret\": \"{{adminSecret}}\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Obter token (Operador / Defesa Civil)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.test('perfil Operador', () => pm.expect(pm.response.json().perfil).to.eql('Operador'));",
+                  "pm.collectionVariables.set('tokenOperador', pm.response.json().accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/token",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{operadorId}}\",\n  \"clientSecret\": \"{{operadorSecret}}\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Obter token (Sensor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.test('perfil Sensor', () => pm.expect(pm.response.json().perfil).to.eql('Sensor'));",
+                  "pm.collectionVariables.set('tokenSensor', pm.response.json().accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/token",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"{{sensorId}}\",\n  \"clientSecret\": \"{{sensorSecret}}\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Listar bairros",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "const pantanal = pm.response.json().find(b => b.nome === 'Jardim Pantanal');",
+                  "pm.collectionVariables.set('bairroId', pantanal.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/bairros"
+          }
+        },
+        {
+          "name": "Listar sensores do bairro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const s = pm.response.json();",
+                  "const id = c => s.find(x => x.codigo === c).id;",
+                  "pm.collectionVariables.set('bl1', id('BL-PANT-01'));",
+                  "pm.collectionVariables.set('bl2', id('BL-PANT-02'));",
+                  "pm.collectionVariables.set('nivelQuadra', id('NIV-PANT-Q1'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/sensores?bairroId={{bairroId}}"
+          }
+        },
+        {
+          "name": "Listar quadras do bairro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const q = pm.response.json().find(x => x.nome === 'Quadra Poliesportiva Pantanal');",
+                  "pm.collectionVariables.set('quadraId', q.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/quadras?bairroId={{bairroId}}"
+          }
+        },
+        {
+          "name": "Listar robôs do bairro",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/robos?bairroId={{bairroId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Sentir: entupimentos",
+      "item": [
+        {
+          "name": "Boca de lobo 85% → missão com robô",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('201', () => pm.response.to.have.status(201));",
+                  "pm.test('robô despachado', () => pm.expect(pm.response.json().acoesExecutadas[0]).to.include('atribuída ao robô'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/sensores/{{bl1}}/leituras",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"valor\": 85 }"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSensor}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Boca de lobo 92% → missão pendente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('aguardando robô', () => pm.expect(pm.response.json().acoesExecutadas[0]).to.include('aguardando robô'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/sensores/{{bl2}}/leituras",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"valor\": 92 }"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSensor}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Prever: risco",
+      "item": [
+        {
+          "name": "Avaliar risco (Open-Meteo, 6 h)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.test('2 entupimentos considerados', () => pm.expect(pm.response.json().avaliacao.entupimentosAbertos).to.eql(2));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/bairros/{{bairroId}}/avaliar-risco?horas=6",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenOperador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Histórico de avaliações",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/bairros/{{bairroId}}/avaliacoes-risco"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Agir: quadra-reservatório",
+      "item": [
+        {
+          "name": "Preparar quadra",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/quadras/{{quadraId}}/status",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"EmPreparacao\" }"
+            }
+          }
+        },
+        {
+          "name": "Nível 45% → Retendo",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/sensores/{{nivelQuadra}}/leituras",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"valor\": 45 }"
+            }
+          }
+        },
+        {
+          "name": "Nível 93% → alerta",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/sensores/{{nivelQuadra}}/leituras",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"valor\": 93 }"
+            }
+          }
+        },
+        {
+          "name": "Alertas ativos do bairro",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/alertas?bairroId={{bairroId}}&ativo=true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Robôs e missões",
+      "item": [
+        {
+          "name": "Fila de missões",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const m = pm.response.json().find(x => x.status === 'EmAndamento');",
+                  "pm.collectionVariables.set('missaoId', m.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/missoes?bairroId={{bairroId}}"
+          }
+        },
+        {
+          "name": "Concluir missão → robô assume a próxima",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('próxima missão assumida', () => pm.expect(pm.response.json().proximaMissaoDoRobo).to.not.be.null);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/missoes/{{missaoId}}/concluir"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Depois do pico",
+      "item": [
+        {
+          "name": "Esvaziar quadra",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/quadras/{{quadraId}}/status",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"Esvaziando\" }"
+            }
+          }
+        },
+        {
+          "name": "Quadra disponível",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/quadras/{{quadraId}}/status",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"Disponivel\" }"
+            }
+          }
+        },
+        {
+          "name": "Painel do bairro",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/bairros/{{bairroId}}/painel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Cadastros",
+      "item": [
+        {
+          "name": "Criar bairro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('novoBairroId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/bairros",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Bela Vista {{$randomInt}}\",\n  \"cidade\": \"São Paulo\",\n  \"uf\": \"SP\",\n  \"latitude\": -23.5614,\n  \"longitude\": -46.6559,\n  \"limiarChuvaMm\": 25\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar quadra (logradouro via ViaCEP)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('logradouro do ViaCEP', () => pm.expect(pm.response.json().logradouro).to.eql('Avenida Paulista'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quadras",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Quadra Avenida Paulista\",\n  \"bairroId\": \"{{novoBairroId}}\",\n  \"cep\": \"01310-100\",\n  \"numero\": \"1578\",\n  \"latitude\": -23.5614,\n  \"longitude\": -46.6559,\n  \"capacidadeM3\": 380\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar sensor de boca de lobo",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/sensores",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"BL-BV-{{$randomInt}}\",\n  \"tipo\": \"BocaDeLobo\",\n  \"bairroId\": \"{{novoBairroId}}\",\n  \"limiar\": 70\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar robô desentupidor",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/robos",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"DES-BV-{{$randomInt}}\",\n  \"tipo\": \"Desentupidor\",\n  \"bairroBaseId\": \"{{novoBairroId}}\",\n  \"bateria\": 100\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar missão de inspeção",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/missoes",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"Inspecao\",\n  \"bairroId\": \"{{novoBairroId}}\",\n  \"descricao\": \"Inspeção preventiva antes da estação de chuvas\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Erros",
+      "item": [
+        {
+          "name": "400 · payload inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('400 VALIDATION_ERROR', () => { pm.response.to.have.status(400); pm.expect(pm.response.json().errorCode).to.eql('VALIDATION_ERROR'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/bairros",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"nome\": \"\", \"cidade\": \"SP\", \"uf\": \"SPX\", \"latitude\": -23.5, \"longitude\": -46.6, \"limiarChuvaMm\": 0 }"
+            }
+          }
+        },
+        {
+          "name": "400 · CEP inexistente",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quadras",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"nome\": \"Quadra X\", \"bairroId\": \"{{bairroId}}\", \"cep\": \"99999-999\", \"latitude\": -23.5, \"longitude\": -46.6, \"capacidadeM3\": 100 }"
+            }
+          }
+        },
+        {
+          "name": "409 · transição de status inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/quadras/{{quadraId}}/status",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"Esvaziando\" }"
+            }
+          }
+        },
+        {
+          "name": "404 · robô inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/robos/00000000-0000-0000-0000-000000000000"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Segurança",
+      "item": [
+        {
+          "name": "401 · sem token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('401 UNAUTHORIZED_ACCESS', () => { pm.response.to.have.status(401); pm.expect(pm.response.json().errorCode).to.eql('UNAUTHORIZED_ACCESS'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/bairros",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "401 · credenciais inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/token",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"clientId\": \"admin\", \"clientSecret\": \"senha-errada\" }"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "403 · sensor tentando cadastrar bairro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403 FORBIDDEN', () => { pm.response.to.have.status(403); pm.expect(pm.response.json().errorCode).to.eql('FORBIDDEN'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/bairros",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"nome\": \"Bairro Indevido\", \"cidade\": \"São Paulo\", \"uf\": \"SP\", \"latitude\": -23.5, \"longitude\": -46.6, \"limiarChuvaMm\": 20 }"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSensor}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "403 · operador tentando rodar o simulador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/simulador/ciclo",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenOperador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Simulador",
+      "item": [
+        {
+          "name": "Status do simulador",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/simulador"
+          }
+        },
+        {
+          "name": "Executar um ciclo de simulação",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.test('gerou leituras', () => pm.expect(pm.response.json().leituras.length).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/simulador/ciclo"
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+meta {
+  name: Painel do bairro
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bairros/{{bairroId}}/painel
+  body: none
+  auth: inherit
+}

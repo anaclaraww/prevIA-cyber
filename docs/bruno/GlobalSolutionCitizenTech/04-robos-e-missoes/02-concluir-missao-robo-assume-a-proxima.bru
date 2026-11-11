@@ -1,0 +1,15 @@
+meta {
+  name: Concluir missão → robô assume a próxima
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/missoes/{{missaoId}}/concluir
+  body: none
+  auth: inherit
+}
+
+tests {
+  test('próxima missão assumida', () => expect(res.getBody().proximaMissaoDoRobo).to.not.be.null);
+}

@@ -1,0 +1,110 @@
+Summary
+  Generated on: 10/11/2026 - 21:26:40
+  Coverage date: 10/11/2026 - 21:26:29 - 10/11/2026 - 21:26:38
+  Parser: MultiReport (2x Cobertura)
+  Assemblies: 4
+  Classes: 82
+  Files: 46
+  Line coverage: 92.9%
+  Covered lines: 1258
+  Uncovered lines: 96
+  Coverable lines: 1354
+  Total lines: 2926
+  Branch coverage: 80.7% (297 of 368)
+  Covered branches: 297
+  Total branches: 368
+  Method coverage: 97.2% (360 of 370)
+  Full method coverage: 92.1% (341 of 370)
+  Covered methods: 360
+  Fully covered methods: 341
+  Total methods: 370
+
+GlobalSolutionCitizenTech.Api                                                    89.2%
+  BancoHealthCheck                                                                100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.AutenticacaoExtensions              91.5%
+  GlobalSolutionCitizenTech.Api.Autenticacao.ClienteApi                           100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.ConfiguracaoAuth                     100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.ConfiguracaoJwt                      100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.CredenciaisInvalidasException        100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.EmissorToken                         100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.Perfis                               100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.TokenRequest                         100%
+  GlobalSolutionCitizenTech.Api.Autenticacao.TokenResponse                        100%
+  GlobalSolutionCitizenTech.Api.Controllers.AlertasController                     100%
+  GlobalSolutionCitizenTech.Api.Controllers.AuthController                        100%
+  GlobalSolutionCitizenTech.Api.Controllers.BairrosController                    93.3%
+  GlobalSolutionCitizenTech.Api.Controllers.MissoesController                     100%
+  GlobalSolutionCitizenTech.Api.Controllers.QuadrasController                     100%
+  GlobalSolutionCitizenTech.Api.Controllers.RobosController                       100%
+  GlobalSolutionCitizenTech.Api.Controllers.SensoresController                    100%
+  GlobalSolutionCitizenTech.Api.Controllers.SimuladorController                   100%
+  GlobalSolutionCitizenTech.Api.Erros.ErroResponse                                100%
+  GlobalSolutionCitizenTech.Api.Erros.TratamentoErrosMiddleware                  92.5%
+  GlobalSolutionCitizenTech.Api.Simulacao.SimuladorBackgroundService               36%
+
+GlobalSolutionCitizenTech.Application                                            95.5%
+  GlobalSolutionCitizenTech.Application.Abstracoes.EnderecoCep                    100%
+  GlobalSolutionCitizenTech.Application.DependencyInjection                       100%
+  GlobalSolutionCitizenTech.Application.Dtos.AlertaResponse                       100%
+  GlobalSolutionCitizenTech.Application.Dtos.AlterarAtivacaoSensorRequest         100%
+  GlobalSolutionCitizenTech.Application.Dtos.AlterarStatusQuadraRequest           100%
+  GlobalSolutionCitizenTech.Application.Dtos.AtualizarQuadraRequest               100%
+  GlobalSolutionCitizenTech.Application.Dtos.AvaliacaoRiscoResponse               100%
+  GlobalSolutionCitizenTech.Application.Dtos.BairroRequest                        100%
+  GlobalSolutionCitizenTech.Application.Dtos.BairroResponse                       100%
+  GlobalSolutionCitizenTech.Application.Dtos.CriarMissaoRequest                   100%
+  GlobalSolutionCitizenTech.Application.Dtos.CriarQuadraRequest                   100%
+  GlobalSolutionCitizenTech.Application.Dtos.CriarRoboRequest                     100%
+  GlobalSolutionCitizenTech.Application.Dtos.CriarSensorRequest                   100%
+  GlobalSolutionCitizenTech.Application.Dtos.LeituraProcessadaResponse            100%
+  GlobalSolutionCitizenTech.Application.Dtos.LeituraResponse                      100%
+  GlobalSolutionCitizenTech.Application.Dtos.LeituraSimuladaResponse              100%
+  GlobalSolutionCitizenTech.Application.Dtos.Mapeamentos                          100%
+  GlobalSolutionCitizenTech.Application.Dtos.MissaoConcluidaResponse              100%
+  GlobalSolutionCitizenTech.Application.Dtos.MissaoResponse                       100%
+  GlobalSolutionCitizenTech.Application.Dtos.PaginaResponse<T>                    100%
+  GlobalSolutionCitizenTech.Application.Dtos.PainelBairroResponse                 100%
+  GlobalSolutionCitizenTech.Application.Dtos.QuadraResponse                       100%
+  GlobalSolutionCitizenTech.Application.Dtos.RegistrarLeituraRequest              100%
+  GlobalSolutionCitizenTech.Application.Dtos.ResultadoAvaliacaoRiscoResponse      100%
+  GlobalSolutionCitizenTech.Application.Dtos.ResultadoCicloSimulacaoResponse      100%
+  GlobalSolutionCitizenTech.Application.Dtos.RoboResponse                         100%
+  GlobalSolutionCitizenTech.Application.Dtos.SensorResponse                       100%
+  GlobalSolutionCitizenTech.Application.Dtos.StatusSimuladorResponse              100%
+  GlobalSolutionCitizenTech.Application.Excecoes.DadosInvalidosException          100%
+  GlobalSolutionCitizenTech.Application.Excecoes.RecursoNaoEncontradoException    100%
+  GlobalSolutionCitizenTech.Application.Excecoes.ServicoExternoException          100%
+  GlobalSolutionCitizenTech.Application.Servicos.AlertaService                    100%
+  GlobalSolutionCitizenTech.Application.Servicos.BairroService                   94.4%
+  GlobalSolutionCitizenTech.Application.Servicos.DespachoMissoes                  100%
+  GlobalSolutionCitizenTech.Application.Servicos.MissaoService                   82.9%
+  GlobalSolutionCitizenTech.Application.Servicos.PainelService                    100%
+  GlobalSolutionCitizenTech.Application.Servicos.QuadraService                   95.3%
+  GlobalSolutionCitizenTech.Application.Servicos.RiscoService                    98.3%
+  GlobalSolutionCitizenTech.Application.Servicos.RoboService                     93.3%
+  GlobalSolutionCitizenTech.Application.Servicos.SensorService                   98.9%
+  GlobalSolutionCitizenTech.Application.Simulacao.ConfiguracaoSimulador           100%
+  GlobalSolutionCitizenTech.Application.Simulacao.EstadoSimulacao                 100%
+  GlobalSolutionCitizenTech.Application.Simulacao.PrevisaoSimuladaClient          100%
+  GlobalSolutionCitizenTech.Application.Simulacao.SimuladorSensores              91.1%
+
+GlobalSolutionCitizenTech.Domain                                                 96.1%
+  GlobalSolutionCitizenTech.Domain.Comum.Entidade                                 100%
+  GlobalSolutionCitizenTech.Domain.Comum.RegraNegocioException                    100%
+  GlobalSolutionCitizenTech.Domain.Entidades.Alerta                               100%
+  GlobalSolutionCitizenTech.Domain.Entidades.AvaliacaoRisco                       100%
+  GlobalSolutionCitizenTech.Domain.Entidades.Bairro                              95.2%
+  GlobalSolutionCitizenTech.Domain.Entidades.Leitura                              100%
+  GlobalSolutionCitizenTech.Domain.Entidades.Missao                              95.1%
+  GlobalSolutionCitizenTech.Domain.Entidades.Quadra                              98.3%
+  GlobalSolutionCitizenTech.Domain.Entidades.Robo                                95.6%
+  GlobalSolutionCitizenTech.Domain.Entidades.Sensor                              88.8%
+  GlobalSolutionCitizenTech.Domain.Servicos.CalculadoraRisco                      100%
+  GlobalSolutionCitizenTech.Domain.Servicos.SeletorRobo                           100%
+
+GlobalSolutionCitizenTech.Infrastructure                                           82%
+  GlobalSolutionCitizenTech.Infrastructure.Clientes.OpenMeteoClient              94.4%
+  GlobalSolutionCitizenTech.Infrastructure.Clientes.ViaCepClient                  100%
+  GlobalSolutionCitizenTech.Infrastructure.DependencyInjection                   82.3%
+  GlobalSolutionCitizenTech.Infrastructure.Persistencia.AppDbContext              100%
+  GlobalSolutionCitizenTech.Infrastructure.Persistencia.DadosDemonstracao           0%

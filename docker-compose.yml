@@ -1,0 +1,41 @@
+name: citizentech
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: citizentech-postgres
+    environment:
+      POSTGRES_DB: citizentech
+      POSTGRES_USER: citizentech
+      POSTGRES_PASSWORD: citizentech
+    ports:
+      - "5433:5432"   # 5433 no host para não colidir com um Postgres local
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U citizentech -d citizentech"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    container_name: citizentech-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=citizentech;Username=citizentech;Password=citizentech"
+      Database__AplicarMigrations: "true"
+      Database__Seed: "true"
+      # Simulador (opcional): SIMULADOR=true CENARIO=ChuvaForte CHUVA_PREVISTA_MM=35 docker compose up -d
+      Simulador__Habilitado: "${SIMULADOR:-false}"
+      Simulador__Cenario: "${CENARIO:-Normal}"
+      Simulador__IntervaloSegundos: "${INTERVALO_SIMULADOR:-20}"
+      Simulador__ChuvaPrevistaMm: "${CHUVA_PREVISTA_MM:-}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

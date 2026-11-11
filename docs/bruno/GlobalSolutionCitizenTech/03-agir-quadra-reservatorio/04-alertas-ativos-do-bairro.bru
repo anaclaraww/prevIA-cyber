@@ -1,0 +1,11 @@
+meta {
+  name: Alertas ativos do bairro
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/alertas?bairroId={{bairroId}}&ativo=true
+  body: none
+  auth: inherit
+}

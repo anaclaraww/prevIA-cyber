@@ -1,0 +1,19 @@
+meta {
+  name: Listar sensores do bairro
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/sensores?bairroId={{bairroId}}
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  const s = res.getBody();
+  const id = c => s.find(x => x.codigo === c).id;
+  bru.setVar('bl1', id('BL-PANT-01'));
+  bru.setVar('bl2', id('BL-PANT-02'));
+  bru.setVar('nivelQuadra', id('NIV-PANT-Q1'));
+}

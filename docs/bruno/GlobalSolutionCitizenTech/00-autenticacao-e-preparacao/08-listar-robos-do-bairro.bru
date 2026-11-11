@@ -1,0 +1,11 @@
+meta {
+  name: Listar robôs do bairro
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/v1/robos?bairroId={{bairroId}}
+  body: none
+  auth: inherit
+}

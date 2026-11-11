@@ -1,0 +1,15 @@
+meta {
+  name: Health check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/health
+  body: none
+  auth: none
+}
+
+tests {
+  test('API e banco no ar', () => expect(res.getStatus()).to.equal(200));
+}
