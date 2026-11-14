@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Testcontainers.PostgreSql;
 
 namespace GlobalSolutionCitizenTech.IntegrationTests.Infra;
@@ -22,6 +23,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public PrevisaoControlavel Previsao { get; } = new();
     public CepControlavel Cep { get; } = new();
+
+    /// <summary>Tudo o que a aplicação logou, como chegaria ao console / OpenTelemetry.</summary>
+    public CaptorLogs Logs { get; } = new();
 
     public static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web)
     {
@@ -66,6 +70,12 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         }
 
         // Simulador determinístico: cenário de temporal, missões concluídas no ciclo seguinte, sem avaliar risco.
+        // Privacidade: chaves de teste, cenários de demonstração ligados e IA offline (sem chave da Anthropic).
+        builder.UseSetting("Privacidade:ChaveCriptografia", Convert.ToBase64String(new byte[32].Select((_, i) => (byte)(i + 1)).ToArray()));
+        builder.UseSetting("Privacidade:ChaveHash", Convert.ToBase64String(new byte[32].Select((_, i) => (byte)(100 + i)).ToArray()));
+        builder.UseSetting("Privacidade:CenariosDemonstracao", "true");
+        builder.UseSetting("Privacidade:Ia:ApiKey", "");
+
         builder.UseSetting("Simulador:Habilitado", "false");
         builder.UseSetting("Simulador:Cenario", "ChuvaForte");
         builder.UseSetting("Simulador:DuracaoMissaoSegundos", "0");
@@ -78,6 +88,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             services.RemoveAll<ICepClient>();
             services.AddSingleton<IPrevisaoTempoClient>(Previsao);
             services.AddSingleton<ICepClient>(Cep);
+            services.AddSingleton<ILoggerProvider>(Logs);
         });
     }
 
@@ -145,4 +156,31 @@ public static class HttpExtensions
 
     public static Task<HttpResponseMessage> PatchJsonAsync(this HttpClient http, string url, object? corpo = null) =>
         http.PatchAsJsonAsync(url, corpo ?? new { }, ApiFactory.Json);
+}
+
+/// <summary>Provider de log que guarda cada linha (mensagem + atributos estruturados + exceção).</summary>
+public sealed class CaptorLogs : ILoggerProvider
+{
+    private readonly List<string> _linhas = [];
+
+    public IReadOnlyList<string> Linhas { get { lock (_linhas) return _linhas.ToList(); } }
+
+    public ILogger CreateLogger(string categoryName) => new Logger(this, categoryName);
+    public void Dispose() { }
+
+    private sealed class Logger(CaptorLogs captor, string categoria) : ILogger
+    {
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Information;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            var estruturado = state is IEnumerable<KeyValuePair<string, object?>> pares
+                ? string.Join(";", pares.Select(p => $"{p.Key}={p.Value}"))
+                : "";
+            lock (captor._linhas)
+                captor._linhas.Add($"[{categoria}] {formatter(state, exception)} | {estruturado} | {exception}");
+        }
+    }
 }

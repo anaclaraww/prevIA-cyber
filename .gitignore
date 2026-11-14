@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Pacote de entrega gerado por scripts/empacotar-cyber.py
+entrega-cyber.zip

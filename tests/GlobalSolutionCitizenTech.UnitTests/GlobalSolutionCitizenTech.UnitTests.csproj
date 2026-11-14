@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\GlobalSolutionCitizenTech.Application\GlobalSolutionCitizenTech.Application.csproj" />
     <ProjectReference Include="..\..\src\GlobalSolutionCitizenTech.Infrastructure\GlobalSolutionCitizenTech.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\GlobalSolutionCitizenTech.Privacidade\GlobalSolutionCitizenTech.Privacidade.csproj" />
   </ItemGroup>
 
 </Project>

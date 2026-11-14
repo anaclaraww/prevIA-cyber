@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GlobalSolutionCitizenTech.Infrastructure\GlobalSolutionCitizenTech.Infrastructure.csproj" />
+    <ProjectReference Include="..\GlobalSolutionCitizenTech.Privacidade\GlobalSolutionCitizenTech.Privacidade.csproj" />
   </ItemGroup>
 
 </Project>

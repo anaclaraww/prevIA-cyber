@@ -1,0 +1,10 @@
+### 04-erro-com-cpf
+$ curl -X POST http://localhost:8081/api/v1/demonstracao/vazamentos/erro-com-cpf -H Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjaXRpemVudGVjaC1hcGkiLCJpc3MiOiJHbG9iYWxTb2x1dGlvbkNpdGl6ZW5UZWNoIiwiZXhwIjoxNzk0NzAwMTY1LCJpYXQiOjE3OTQ2OTY1NjUsIm5iZiI6MTc5NDY5NjU2NSwic3ViIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiJ9.pa_QML3pPn5MoA9L9gIHrBFJIT2vijnmYEI5sGXvCIg -H Content-Type: application/json -d {"cpf":"685.455.566-32"}
+
+HTTP/1.1 400 Bad Request
+Content-Length: 212
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 22:49:27 GMT
+Server: Kestrel
+
+{"success":false,"errorCode":"VALIDATION_ERROR","message":"Os dados enviados s\u00E3o inv\u00E1lidos.","details":"O CPF ***.455.***-32 n\u00E3o consta na base da Defesa Civil.","traceId":"0HNQ2K640VQIV:00000001"}

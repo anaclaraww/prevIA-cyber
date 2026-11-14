@@ -1,0 +1,10 @@
+### 07-contato-emergencia-sem-token
+$ curl http://localhost:8081/api/v1/moradores/7815b3ec-90f5-4af7-8aa6-bd3ceb319162/contato-emergencia
+
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 22:49:28 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"success":false,"errorCode":"UNAUTHORIZED_ACCESS","message":"Token ausente, inválido ou expirado. Obtenha um em POST /api/v1/auth/token.","details":null,"traceId":"0HNQ2K640VQJ2:00000001"}

@@ -1,3 +1,4 @@
+using GlobalSolutionCitizenTech.Application.Privacidade;
 using GlobalSolutionCitizenTech.Application.Servicos;
 using GlobalSolutionCitizenTech.Application.Simulacao;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,8 @@ public static class DependencyInjection
         services.AddScoped<IRiscoService, RiscoService>();
         services.AddScoped<IAlertaService, AlertaService>();
         services.AddScoped<IPainelService, PainelService>();
+        services.AddScoped<IMoradorService, MoradorService>();
+        services.AddScoped<IPainelSegurancaService, PainelSegurancaService>();
 
         services.Configure<ConfiguracaoSimulador>(configuration.GetSection(ConfiguracaoSimulador.Secao));
         services.AddSingleton<EstadoSimulacao>();

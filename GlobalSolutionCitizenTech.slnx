@@ -4,6 +4,7 @@
     <Project Path="src/GlobalSolutionCitizenTech.Application/GlobalSolutionCitizenTech.Application.csproj" />
     <Project Path="src/GlobalSolutionCitizenTech.Domain/GlobalSolutionCitizenTech.Domain.csproj" />
     <Project Path="src/GlobalSolutionCitizenTech.Infrastructure/GlobalSolutionCitizenTech.Infrastructure.csproj" />
+    <Project Path="src/GlobalSolutionCitizenTech.Privacidade/GlobalSolutionCitizenTech.Privacidade.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/GlobalSolutionCitizenTech.IntegrationTests/GlobalSolutionCitizenTech.IntegrationTests.csproj" />

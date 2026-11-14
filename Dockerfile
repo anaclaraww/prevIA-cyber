@@ -7,6 +7,7 @@ COPY Directory.Build.props GlobalSolutionCitizenTech.slnx ./
 COPY src/GlobalSolutionCitizenTech.Domain/*.csproj src/GlobalSolutionCitizenTech.Domain/
 COPY src/GlobalSolutionCitizenTech.Application/*.csproj src/GlobalSolutionCitizenTech.Application/
 COPY src/GlobalSolutionCitizenTech.Infrastructure/*.csproj src/GlobalSolutionCitizenTech.Infrastructure/
+COPY src/GlobalSolutionCitizenTech.Privacidade/*.csproj src/GlobalSolutionCitizenTech.Privacidade/
 COPY src/GlobalSolutionCitizenTech.Api/*.csproj src/GlobalSolutionCitizenTech.Api/
 RUN dotnet restore src/GlobalSolutionCitizenTech.Api/GlobalSolutionCitizenTech.Api.csproj
 

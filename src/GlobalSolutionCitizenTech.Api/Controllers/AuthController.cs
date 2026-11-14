@@ -1,5 +1,6 @@
 using GlobalSolutionCitizenTech.Api.Autenticacao;
 using GlobalSolutionCitizenTech.Api.Erros;
+using GlobalSolutionCitizenTech.Privacidade.Taint;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ public class AuthController(IEmissorToken emissor) : ControllerBase
     /// | `Admin` | tudo, inclusive cadastros e o simulador |
     /// </remarks>
     [HttpPost("token")]
+    [PermiteDadosSensiveis("O token JWT é a própria resposta do login.")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErroResponse>(StatusCodes.Status401Unauthorized)]
     public TokenResponse GerarToken(TokenRequest request) => emissor.Emitir(request);

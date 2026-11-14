@@ -5,6 +5,7 @@ using GlobalSolutionCitizenTech.Api.Simulacao;
 using GlobalSolutionCitizenTech.Application;
 using GlobalSolutionCitizenTech.Infrastructure;
 using GlobalSolutionCitizenTech.Infrastructure.Persistencia;
+using GlobalSolutionCitizenTech.Privacidade;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -35,6 +36,7 @@ builder.Services
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAutenticacaoJwt(builder.Configuration);
+builder.Services.AddPrivacidade(builder.Configuration);
 builder.Services.AddHostedService<SimuladorBackgroundService>();
 
 builder.Services.AddHealthChecks()
@@ -73,7 +75,13 @@ var app = builder.Build();
 app.ValidarConfiguracaoJwt();
 await PrepararBancoAsync(app);
 
+// Privacidade por fora do tratamento de erros: o envelope de erro também é inspecionado antes de sair.
+app.UsePrivacidade();
 app.UseMiddleware<TratamentoErrosMiddleware>();
+
+// Painel Risco Cidadão (wwwroot/painel).
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

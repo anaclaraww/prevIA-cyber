@@ -173,6 +173,77 @@ namespace GlobalSolutionCitizenTech.Infrastructure.Persistencia.Migrations
                     b.ToTable("bairros", (string)null);
                 });
 
+            modelBuilder.Entity("GlobalSolutionCitizenTech.Domain.Entidades.EventoSeguranca", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Categorias")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("categorias");
+
+                    b.Property<DateTimeOffset>("CriadoEm")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("criado_em");
+
+                    b.Property<string>("DescricaoTecnica")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("descricao_tecnica");
+
+                    b.Property<string>("Farol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("farol");
+
+                    b.Property<string>("MensagemCidadao")
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("mensagem_cidadao");
+
+                    b.Property<string>("Origem")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("origem");
+
+                    b.Property<string>("Sink")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("sink");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("tipo");
+
+                    b.Property<string>("TraceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("trace_id");
+
+                    b.Property<string>("TraduzidoPor")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("traduzido_por");
+
+                    b.HasKey("Id")
+                        .HasName("pk_eventos_seguranca");
+
+                    b.HasIndex("CriadoEm")
+                        .HasDatabaseName("ix_eventos_seguranca_criado_em");
+
+                    b.ToTable("eventos_seguranca", (string)null);
+                });
+
             modelBuilder.Entity("GlobalSolutionCitizenTech.Domain.Entidades.Leitura", b =>
                 {
                     b.Property<Guid>("Id")
@@ -274,6 +345,80 @@ namespace GlobalSolutionCitizenTech.Infrastructure.Persistencia.Migrations
                         .HasDatabaseName("ix_missoes_bairro_id_status");
 
                     b.ToTable("missoes", (string)null);
+                });
+
+            modelBuilder.Entity("GlobalSolutionCitizenTech.Domain.Entidades.Morador", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BairroId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("bairro_id");
+
+                    b.Property<string>("CondicaoSaudeCifrada")
+                        .HasMaxLength(1200)
+                        .HasColumnType("character varying(1200)")
+                        .HasColumnName("condicao_saude_cifrada");
+
+                    b.Property<string>("CpfHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("cpf_hash");
+
+                    b.Property<string>("CpfMascarado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("cpf_mascarado");
+
+                    b.Property<DateTimeOffset>("CriadoEm")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("criado_em");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("nome");
+
+                    b.Property<string>("Prioridade")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("prioridade");
+
+                    b.Property<string>("RgMascarado")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("rg_mascarado");
+
+                    b.Property<string>("TelefoneCifrado")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("telefone_cifrado");
+
+                    b.Property<string>("TelefoneMascarado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("telefone_mascarado");
+
+                    b.HasKey("Id")
+                        .HasName("pk_moradores");
+
+                    b.HasIndex("BairroId")
+                        .HasDatabaseName("ix_moradores_bairro_id");
+
+                    b.HasIndex("CpfHash")
+                        .IsUnique()
+                        .HasDatabaseName("ix_moradores_cpf_hash");
+
+                    b.ToTable("moradores", (string)null);
                 });
 
             modelBuilder.Entity("GlobalSolutionCitizenTech.Domain.Entidades.Quadra", b =>
@@ -522,6 +667,16 @@ namespace GlobalSolutionCitizenTech.Infrastructure.Persistencia.Migrations
                     b.Navigation("Robo");
 
                     b.Navigation("Sensor");
+                });
+
+            modelBuilder.Entity("GlobalSolutionCitizenTech.Domain.Entidades.Morador", b =>
+                {
+                    b.HasOne("GlobalSolutionCitizenTech.Domain.Entidades.Bairro", null)
+                        .WithMany()
+                        .HasForeignKey("BairroId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_moradores_bairros_bairro_id");
                 });
 
             modelBuilder.Entity("GlobalSolutionCitizenTech.Domain.Entidades.Quadra", b =>

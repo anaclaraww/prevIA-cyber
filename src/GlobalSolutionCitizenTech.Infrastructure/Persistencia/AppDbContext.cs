@@ -15,6 +15,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Missao> Missoes => Set<Missao>();
     public DbSet<Alerta> Alertas => Set<Alerta>();
     public DbSet<AvaliacaoRisco> AvaliacoesRisco => Set<AvaliacaoRisco>();
+    public DbSet<Morador> Moradores => Set<Morador>();
+    public DbSet<EventoSeguranca> EventosSeguranca => Set<EventoSeguranca>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder c)
     {
@@ -27,6 +29,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         c.Properties<StatusMissao>().HaveConversion<string>().HaveMaxLength(20);
         c.Properties<PrioridadeMissao>().HaveConversion<string>().HaveMaxLength(20);
         c.Properties<NivelRisco>().HaveConversion<string>().HaveMaxLength(20);
+        c.Properties<PrioridadeEvacuacao>().HaveConversion<string>().HaveMaxLength(20);
+        c.Properties<TipoEventoSeguranca>().HaveConversion<string>().HaveMaxLength(40);
+        c.Properties<SinkSeguranca>().HaveConversion<string>().HaveMaxLength(20);
+        c.Properties<Farol>().HaveConversion<string>().HaveMaxLength(10);
         c.Properties<decimal>().HavePrecision(10, 2);
     }
 
@@ -108,6 +114,34 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(x => x.ChuvaPrevistaMm).HasPrecision(8, 2);
             e.HasOne<Bairro>().WithMany().HasForeignKey(x => x.BairroId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(x => new { x.BairroId, x.CriadoEm });
+        });
+
+        // Privacidade: nenhuma coluna guarda CPF, RG, telefone ou saúde em texto claro.
+        mb.Entity<Morador>(e =>
+        {
+            e.ToTable("moradores");
+            e.Property(x => x.Nome).HasMaxLength(120).IsRequired();
+            e.Property(x => x.CpfMascarado).HasMaxLength(20).IsRequired();
+            e.Property(x => x.CpfHash).HasMaxLength(64).IsRequired();
+            e.Property(x => x.RgMascarado).HasMaxLength(20);
+            e.Property(x => x.TelefoneMascarado).HasMaxLength(20).IsRequired();
+            e.Property(x => x.TelefoneCifrado).HasMaxLength(200).IsRequired();
+            e.Property(x => x.CondicaoSaudeCifrada).HasMaxLength(1200);
+            e.Ignore(x => x.PossuiCondicaoSaude);
+            e.HasIndex(x => x.CpfHash).IsUnique();
+            e.HasOne<Bairro>().WithMany().HasForeignKey(x => x.BairroId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        mb.Entity<EventoSeguranca>(e =>
+        {
+            e.ToTable("eventos_seguranca");
+            e.Property(x => x.Categorias).HasMaxLength(100).IsRequired();
+            e.Property(x => x.DescricaoTecnica).HasMaxLength(500).IsRequired();
+            e.Property(x => x.Origem).HasMaxLength(200).IsRequired();
+            e.Property(x => x.TraceId).HasMaxLength(100);
+            e.Property(x => x.MensagemCidadao).HasMaxLength(600);
+            e.Property(x => x.TraduzidoPor).HasMaxLength(60);
+            e.HasIndex(x => x.CriadoEm);
         });
     }
 }

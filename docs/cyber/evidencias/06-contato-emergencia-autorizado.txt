@@ -1,0 +1,10 @@
+### 06-contato-emergencia-autorizado
+$ curl http://localhost:8081/api/v1/moradores/7815b3ec-90f5-4af7-8aa6-bd3ceb319162/contato-emergencia -H Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjaXRpemVudGVjaC1hcGkiLCJpc3MiOiJHbG9iYWxTb2x1dGlvbkNpdGl6ZW5UZWNoIiwiZXhwIjoxNzk0NzAwMTY1LCJpYXQiOjE3OTQ2OTY1NjUsIm5iZiI6MTc5NDY5NjU2NSwic3ViIjoiZGVmZXNhLWNpdmlsIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT3BlcmFkb3IifQ.FOX5FnOG6jJ6rLNfnbPnPKkTY-vn3edqGkdbqyjAVpE
+
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 22:49:28 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"id":"7815b3ec-90f5-4af7-8aa6-bd3ceb319162","nome":"Dona Maria das Graças","bairroId":"0613c052-a71a-4d40-92ce-92d3ae596962","telefone":"(11) 98765-4321","condicaoSaude":"Acamada, usa concentrador de oxigênio","prioridade":"Critica"}

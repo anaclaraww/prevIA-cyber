@@ -3,10 +3,10 @@
 # docs/evidencias/cenario-api.md. Requer: curl e python (só para formatar o JSON).
 #
 #   docker compose down -v && docker compose up -d --build   # banco limpo com o seed
-#   ./scripts/gerar-evidencias.sh                             # (padrão: http://localhost:8080)
+#   ./scripts/gerar-evidencias.sh                             # (padrão: http://localhost:8081)
 set -euo pipefail
 
-BASE="${1:-http://localhost:8080}"
+BASE="${1:-http://localhost:8081}"
 API="$BASE/api/v1"
 SAIDA="docs/evidencias/cenario-api.md"
 PY=$(command -v python3 || command -v python)

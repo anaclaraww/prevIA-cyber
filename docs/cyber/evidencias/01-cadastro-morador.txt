@@ -1,0 +1,11 @@
+### 01-cadastro-morador
+$ curl -X POST http://localhost:8081/api/v1/moradores -H Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjaXRpemVudGVjaC1hcGkiLCJpc3MiOiJHbG9iYWxTb2x1dGlvbkNpdGl6ZW5UZWNoIiwiZXhwIjoxNzk0NzAwMTY1LCJpYXQiOjE3OTQ2OTY1NjUsIm5iZiI6MTc5NDY5NjU2NSwic3ViIjoiZGVmZXNhLWNpdmlsIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiT3BlcmFkb3IifQ.FOX5FnOG6jJ6rLNfnbPnPKkTY-vn3edqGkdbqyjAVpE -H Content-Type: application/json -d {"nome":"Dona Maria das Gra\u00e7as","bairroId":"0613c052-a71a-4d40-92ce-92d3ae596962","cpf":"090.254.552-39","rg":"12.345.678-9","telefone":"(11) 98765-4321","condicaoSaude":"Acamada, usa concentrador de oxig\u00eanio","prioridade":"Critica"}
+
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 22:49:26 GMT
+Server: Kestrel
+Location: /api/v1/moradores/7815b3ec-90f5-4af7-8aa6-bd3ceb319162
+Transfer-Encoding: chunked
+
+{"id":"7815b3ec-90f5-4af7-8aa6-bd3ceb319162","nome":"Dona Maria das Graças","bairroId":"0613c052-a71a-4d40-92ce-92d3ae596962","cpfMascarado":"***.254.***-39","rgMascarado":"**********-9","telefoneMascarado":"(11) *****-4321","possuiCondicaoSaude":true,"prioridade":"Critica","criadoEm":"2026-11-14T22:49:26.9050741+00:00"}

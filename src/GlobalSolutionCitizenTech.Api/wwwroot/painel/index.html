@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Risco Cidadão</title>
+<style>
+  :root {
+    --bg: #f4f1ea; --card: #fffdf8; --ink: #1f2328; --muted: #5d636b; --line: #e3ddd0;
+    --verde: #1f8a4c; --amarelo: #c98a00; --vermelho: #c8372d; --apagado: #d9d4c8;
+    --verde-bg: #e3f3e8; --amarelo-bg: #fbf0d4; --vermelho-bg: #f9e1de; --acento: #2c4a7a;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151a; --card: #1a1f26; --ink: #e8e6e1; --muted: #9aa1aa; --line: #2a313a;
+      --verde: #3ccf7a; --amarelo: #f2b822; --vermelho: #ff5d4f; --apagado: #2b3139;
+      --verde-bg: #15301f; --amarelo-bg: #33290c; --vermelho-bg: #3a1714; --acento: #8fb3ff;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151a; --card: #1a1f26; --ink: #e8e6e1; --muted: #9aa1aa; --line: #2a313a;
+    --verde: #3ccf7a; --amarelo: #f2b822; --vermelho: #ff5d4f; --apagado: #2b3139;
+    --verde-bg: #15301f; --amarelo-bg: #33290c; --vermelho-bg: #3a1714; --acento: #8fb3ff;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; }
+  .pagina { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;
+           border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 24px; }
+  header h1 { margin: 0; font-size: 28px; letter-spacing: -.02em; }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  .status { font-size: 13px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .grade { display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
+  @media (max-width: 760px) { .grade { grid-template-columns: 1fr; } }
+
+  /* Farol */
+  .semaforo { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .caixa-farol { background: #111; border-radius: 40px; padding: 16px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .luz { width: 64px; height: 64px; border-radius: 50%; background: #333; opacity: .25; transition: all .4s; }
+  .luz.vermelho { background: #ff3b30; } .luz.amarelo { background: #ffcc00; } .luz.verde { background: #34c759; }
+  .luz.acesa { opacity: 1; box-shadow: 0 0 28px currentColor; }
+  .luz.vermelho.acesa { color: #ff3b30; } .luz.amarelo.acesa { color: #ffcc00; } .luz.verde.acesa { color: #34c759; }
+  .indicador { font-size: 64px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .indicador small { font-size: 18px; color: var(--muted); font-weight: 400; }
+  .rotulo { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: var(--muted); }
+
+  .mensagem { font-size: 22px; line-height: 1.45; margin: 8px 0 16px; }
+  .faixa { border-left: 6px solid var(--apagado); padding-left: 16px; }
+  .faixa.Verde { border-color: var(--verde); } .faixa.Amarelo { border-color: var(--amarelo); } .faixa.Vermelho { border-color: var(--vermelho); }
+  .contagem { display: flex; gap: 12px; flex-wrap: wrap; }
+  .pilula { border-radius: 999px; padding: 4px 12px; font-size: 14px; font-weight: 600; }
+  .pilula.Verde { background: var(--verde-bg); color: var(--verde); }
+  .pilula.Amarelo { background: var(--amarelo-bg); color: var(--amarelo); }
+  .pilula.Vermelho { background: var(--vermelho-bg); color: var(--vermelho); }
+  .pilula.neutra { background: transparent; border: 1px solid var(--line); color: var(--muted); font-weight: 400; }
+
+  h2 { font-size: 18px; margin: 32px 0 12px; }
+  .acoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  button { font: inherit; cursor: pointer; border-radius: 10px; border: 1px solid var(--line);
+           background: var(--card); color: var(--ink); padding: 10px 12px; text-align: left; }
+  button:hover { border-color: var(--acento); }
+  button b { display: block; font-size: 14px; }
+  button span { display: block; font-size: 12px; color: var(--muted); }
+  button.primario { background: var(--acento); color: var(--bg); border-color: var(--acento); text-align: center; }
+
+  .linha-tempo { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .evento { display: grid; grid-template-columns: 14px 1fr; gap: 12px; background: var(--card);
+            border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .ponto { width: 14px; height: 14px; border-radius: 50%; margin-top: 5px; }
+  .ponto.Verde { background: var(--verde); } .ponto.Amarelo { background: var(--amarelo); } .ponto.Vermelho { background: var(--vermelho); }
+  .evento p { margin: 0; }
+  .evento .meta { font-size: 12px; color: var(--muted); margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
+  details { margin-top: 6px; font-size: 13px; color: var(--muted); }
+  details code { white-space: pre-wrap; word-break: break-word; font-size: 12px; }
+
+  form.login { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  input { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+          background: var(--card); color: var(--ink); min-width: 0; }
+  .oculto { display: none !important; }
+  .resultado { font-size: 13px; color: var(--muted); margin-top: 10px; min-height: 1.5em; }
+  .vazio { color: var(--muted); padding: 16px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <header>
+    <div>
+      <div class="rotulo">Defesa Civil, Moradores vulneráveis</div>
+      <h1>Risco Cidadão</h1>
+      <p>Como estão protegidos os dados de quem precisa de prioridade na evacuação.</p>
+    </div>
+    <div>
+      <form class="login" id="login">
+        <input id="clientId" placeholder="clientId" value="admin" autocomplete="username" aria-label="clientId">
+        <input id="clientSecret" placeholder="clientSecret" type="password" autocomplete="current-password" aria-label="clientSecret">
+        <button class="primario" type="submit">Entrar</button>
+      </form>
+      <div class="status" id="status">Faça login para ver o painel.</div>
+    </div>
+  </header>
+
+  <section class="grade" id="painel" aria-live="polite">
+    <div class="card semaforo">
+      <div class="caixa-farol" role="img" id="farolImg" aria-label="Farol">
+        <div class="luz vermelho" id="luzVermelho"></div>
+        <div class="luz amarelo" id="luzAmarelo"></div>
+        <div class="luz verde" id="luzVerde"></div>
+      </div>
+      <div class="rotulo">Indicador Risco Cidadão</div>
+      <div class="indicador"><span id="indicador">-</span><small>/100</small></div>
+      <div class="status">última hora, atualiza a cada 3s</div>
+    </div>
+    <div class="card">
+      <div class="rotulo">O que aconteceu com os seus dados</div>
+      <div class="faixa" id="faixa"><p class="mensagem" id="mensagem">Aguardando dados...</p></div>
+      <div class="contagem" id="contagem"></div>
+      <div class="contagem" id="categorias" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <h2>Simular situações</h2>
+  <div class="acoes">
+    <button data-acao="cadastro"><b>Cadastrar morador</b><span>CPF, telefone e saúde protegidos, verde</span></button>
+    <button data-acao="log-saude"><b>Saúde no log</b><span>logger.info(dados_de_saude), vermelho</span></button>
+    <button data-acao="senha-no-log"><b>Senha no log</b><span>console.log(senha), vermelho</span></button>
+    <button data-acao="erro-com-cpf"><b>Erro que ecoa o CPF</b><span>resposta e log mascarados, amarelo</span></button>
+    <button data-acao="consulta-publica"><b>Consulta sem login</b><span>resposta barrada (403), vermelho</span></button>
+  </div>
+  <div class="resultado" id="resultado"></div>
+
+  <h2>Linha do tempo</h2>
+  <ul class="linha-tempo" id="eventos"><li class="vazio">Nenhum evento ainda.</li></ul>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const nomes = { Verde: "Seguro", Amarelo: "Atenção", Vermelho: "Crítico" };
+  const tipos = {
+    PiiProtegida: "Dado protegido na entrada",
+    VazamentoBloqueadoLog: "Vazamento em log bloqueado",
+    VazamentoMascaradoResposta: "Resposta mascarada",
+    VazamentoBloqueadoResposta: "Resposta bloqueada"
+  };
+  let token = null;
+  try { token = sessionStorage.getItem("rc_token"); } catch { }
+
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  async function api(caminho, opcoes = {}, autenticar = true) {
+    const headers = { "Content-Type": "application/json", ...(opcoes.headers || {}) };
+    if (autenticar && token) headers.Authorization = "Bearer " + token;
+    const r = await fetch(caminho, { ...opcoes, headers });
+    let corpo = null;
+    try { corpo = await r.json(); } catch { }
+    return { status: r.status, corpo };
+  }
+
+  $("login").addEventListener("submit", async e => {
+    e.preventDefault();
+    const r = await api("/api/v1/auth/token", { method: "POST",
+      body: JSON.stringify({ clientId: $("clientId").value, clientSecret: $("clientSecret").value }) }, false);
+    if (r.status !== 200) { $("status").textContent = "Credenciais inválidas."; return; }
+    token = r.corpo.accessToken;
+    try { sessionStorage.setItem("rc_token", token); } catch { }
+    $("status").textContent = "Conectado como " + r.corpo.perfil + ".";
+    $("clientSecret").value = "";
+    atualizar();
+  });
+
+  function farol(cor) {
+    for (const c of ["Vermelho", "Amarelo", "Verde"])
+      $("luz" + c).classList.toggle("acesa", c === cor);
+    $("farolImg").setAttribute("aria-label", "Farol " + (nomes[cor] || ""));
+    $("faixa").className = "faixa " + cor;
+  }
+
+  async function atualizar() {
+    if (!token) return;
+    const r = await api("/api/v1/seguranca/painel");
+    if (r.status === 401) { token = null; $("status").textContent = "Sessão expirada. Faça login de novo."; return; }
+    if (r.status !== 200 || !r.corpo) return;
+    const p = r.corpo;
+    farol(p.farol);
+    $("indicador").textContent = p.indicadorRiscoCidadao;
+    $("mensagem").textContent = p.mensagemPrincipal;
+    $("contagem").innerHTML =
+      `<span class="pilula Verde">${p.verdes} protegidos</span>` +
+      `<span class="pilula Amarelo">${p.amarelos} atenção</span>` +
+      `<span class="pilula Vermelho">${p.vermelhos} críticos</span>`;
+    $("categorias").innerHTML = p.porCategoria.map(c =>
+      `<span class="pilula neutra">${esc(c.categoria)}: ${c.quantidade}</span>`).join("");
+    $("eventos").innerHTML = p.eventos.length === 0 ? '<li class="vazio">Nenhum evento na última hora.</li>' :
+      p.eventos.map(e => `
+        <li class="evento">
+          <div class="ponto ${esc(e.farol)}" title="${esc(nomes[e.farol])}"></div>
+          <div>
+            <p>${esc(e.mensagemCidadao || "Traduzindo para linguagem simples...")}</p>
+            <div class="meta">
+              <span>${new Date(e.ocorridoEm).toLocaleTimeString("pt-BR")}</span>
+              <span>${esc(tipos[e.tipo] || e.tipo)}</span>
+              <span>${esc(e.categorias.join(", "))}</span>
+              <span>texto: ${esc(e.traduzidoPor || "...")}</span>
+            </div>
+            <details><summary>Detalhe técnico</summary>
+              <code>${esc(e.descricaoTecnica)}\norigem: ${esc(e.origem)}, trace: ${esc(e.traceId)}</code>
+            </details>
+          </div>
+        </li>`).join("");
+  }
+
+  function cpfAleatorio() {
+    const n = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+    for (const pesoInicial of [10, 11]) {
+      const soma = n.reduce((s, d, i) => s + d * (pesoInicial - i), 0);
+      const resto = (soma * 10) % 11;
+      n.push(resto === 10 ? 0 : resto);
+    }
+    const s = n.join("");
+    return `${s.slice(0, 3)}.${s.slice(3, 6)}.${s.slice(6, 9)}-${s.slice(9)}`;
+  }
+
+  async function executar(acao) {
+    if (!token) { $("resultado").textContent = "Faça login primeiro."; return; }
+    const base = "/api/v1/demonstracao/vazamentos/";
+    let r;
+    if (acao === "cadastro") {
+      const bairros = await api("/api/v1/bairros");
+      const bairroId = bairros.corpo?.[0]?.id;
+      r = await api("/api/v1/moradores", { method: "POST", body: JSON.stringify({
+        nome: "Dona Maria das Graças", bairroId, cpf: cpfAleatorio(), rg: "12.345.678-9",
+        telefone: "(11) 98765-4321", condicaoSaude: "Acamada, usa concentrador de oxigênio", prioridade: "Critica" }) });
+    } else if (acao === "consulta-publica") {
+      r = await api(base + "consulta-publica?cpf=" + encodeURIComponent(cpfAleatorio()), {}, false);
+    } else if (acao === "log-saude") {
+      r = await api(base + acao, { method: "POST", body: JSON.stringify({ nome: "Seu José", condicaoSaude: "Faz hemodiálise três vezes por semana" }) });
+    } else if (acao === "senha-no-log") {
+      r = await api(base + acao, { method: "POST", body: JSON.stringify({ usuario: "operador.sul", senha: "Enchente@2026!" }) });
+    } else {
+      r = await api(base + acao, { method: "POST", body: JSON.stringify({ cpf: cpfAleatorio() }) });
+    }
+    // Mostra o que realmente saiu da API: é a prova de que o dado não vazou.
+    $("resultado").textContent = `HTTP ${r.status}, ${JSON.stringify(r.corpo)}`;
+    setTimeout(atualizar, 600);
+  }
+
+  document.querySelectorAll("[data-acao]").forEach(b => b.addEventListener("click", () => executar(b.dataset.acao)));
+  if (token) $("status").textContent = "Sessão retomada.";
+  atualizar();
+  setInterval(atualizar, 3000);
+})();
+</script>
+</body>
+</html>

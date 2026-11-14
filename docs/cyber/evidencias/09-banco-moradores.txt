@@ -1,0 +1,10 @@
+### 09 - O que o banco realmente guarda (psql, tabela moradores)
+CPF enviado no cadastro: 090.254.552-39 - telefone (11) 98765-4321 - saúde 'Acamada, usa concentrador de oxigênio'
+
+         nome          | cpf_mascarado  |                             cpf_hash                             | rg_mascarado | telefone_mascarado |                    telefone_cifrado                     |                                   condicao_saude_cifrada                                    | prioridade 
+-----------------------+----------------+------------------------------------------------------------------+--------------+--------------------+---------------------------------------------------------+---------------------------------------------------------------------------------------------+------------
+ Dona Maria das Graças | ***.254.***-39 | 42ec980781c535a76765c2d3ccfbdd41eabca18cf2d433d223727a063e23dc00 | **********-9 | (11) *****-4321    | v1:zXc1LlHMRetknMFTdThFKP4qltjCm/rY9M/unzpD7kWqEORfm/Sp | v1:s1VF3Nq67qaWA1afCWCz9olBD/5WB6zQ20isoWpqGu7oHdwESdCBe5kNRYblH+C5Ff1UNISwoIMe7N5My8dJi30B | Critica
+(1 row)
+
+Busca pelo CPF/telefone/saúde em claro no dump inteiro do banco:
+0

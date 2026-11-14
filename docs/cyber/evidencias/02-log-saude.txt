@@ -1,0 +1,10 @@
+### 02-log-saude
+$ curl -X POST http://localhost:8081/api/v1/demonstracao/vazamentos/log-saude -H Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjaXRpemVudGVjaC1hcGkiLCJpc3MiOiJHbG9iYWxTb2x1dGlvbkNpdGl6ZW5UZWNoIiwiZXhwIjoxNzk0NzAwMTY1LCJpYXQiOjE3OTQ2OTY1NjUsIm5iZiI6MTc5NDY5NjU2NSwic3ViIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiJ9.pa_QML3pPn5MoA9L9gIHrBFJIT2vijnmYEI5sGXvCIg -H Content-Type: application/json -d {"nome":"Seu Jos\u00e9","condicaoSaude":"Faz hemodi\u00e1lise tr\u00eas vezes por semana"}
+
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sat, 14 Nov 2026 22:49:26 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{"cenario":"log-saude","codigoVulneravel":"logger.LogInformation(..., r.CondicaoSaude)","esperado":"A linha de log é suprimida e vira um evento vermelho no painel."}

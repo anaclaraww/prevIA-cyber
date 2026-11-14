@@ -14,6 +14,8 @@ public interface IAppDbContext
     DbSet<Missao> Missoes { get; }
     DbSet<Alerta> Alertas { get; }
     DbSet<AvaliacaoRisco> AvaliacoesRisco { get; }
+    DbSet<Morador> Moradores { get; }
+    DbSet<EventoSeguranca> EventosSeguranca { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }

@@ -80,10 +80,10 @@ docker compose up -d --build
 
 | O quê | Endereço |
 | --- | --- |
-| Swagger (documentação interativa) | http://localhost:8080/swagger |
-| API | http://localhost:8080/api/v1 |
-| Health check (API + banco) | http://localhost:8080/health |
-| PostgreSQL | `localhost:5433` · banco, usuário e senha `citizentech` |
+| Swagger (documentação interativa) | http://localhost:8081/swagger |
+| API | http://localhost:8081/api/v1 |
+| Health check (API + banco) | http://localhost:8081/health |
+| PostgreSQL | `localhost:5434` · banco, usuário e senha `citizentech` |
 
 Na subida, a API aplica as migrations e popula o banco com dados de demonstração (2 bairros reais de
 São Paulo, 4 quadras, 6 sensores e 4 robôs fictícios). Para recomeçar do zero:
@@ -271,7 +271,7 @@ principal e a pasta `/docs`. A página fica em `https://<usuario>.github.io/<rep
 mudar a API, atualize o contrato:
 
 ```bash
-curl -s http://localhost:8080/swagger/v1/swagger.json -o docs/openapi.json
+curl -s http://localhost:8081/swagger/v1/swagger.json -o docs/openapi.json
 ```
 
 | Método | Rota (`/api/v1/...`) | Descrição | Acesso |
@@ -468,6 +468,37 @@ Execução da [collection do Bruno](docs/bruno/GlobalSolutionCitizenTech) contra
 
 ![Recurso inexistente](docs/evidencias/prints/bairroid_errado.png)
 
+
+---
+
+## Cyber: dados pessoais, taint analysis e Risco Cidadão
+
+O cadastro de **moradores vulneráveis** (quem precisa de prioridade na evacuação: acamados, quem depende de
+oxigênio, quem faz hemodiálise) carrega o dado mais sensível do sistema. O módulo
+`GlobalSolutionCitizenTech.Privacidade` protege esse dado em três camadas:
+
+1. **Motor de PII.** Regex + validação (dígito do CPF) sobre todo JSON, formulário e query string. CPF, RG,
+   cartão SUS, saúde, senha, token, telefone e e-mail são tagueados e mascarados (`***.456.***-09`). No banco o
+   CPF vira máscara + HMAC, e telefone e saúde são cifrados com AES-256-GCM.
+2. **Taint analysis.** O que entra como PII fica marcado durante a requisição. Todo log passa por uma barreira
+   que suprime saúde e senha e mascara documento e contato. Toda resposta passa por outra, que mascara o dado
+   para quem está autenticado e devolve `403 SENSITIVE_DATA_BLOCKED` para quem não está.
+3. **Tradução via IA.** Cada detecção vira um evento que o **Claude** traduz em 2 frases para um cidadão leigo
+   de 60 anos. O painel mostra o farol (verde, amarelo e vermelho) e o indicador **Risco Cidadão** (0 a 100). O farol é regra fixa;
+   a IA só escreve o texto, nunca recebe dado pessoal e tem texto offline de contingência.
+
+| Item | Onde |
+| --- | --- |
+| Painel | `http://localhost:8081/painel/` |
+| Auditoria (regras, evidências, decisões) | [`docs/cyber/auditoria.md`](docs/cyber/auditoria.md) |
+| Respostas HTTP, log e banco capturados | [`docs/cyber/evidencias/`](docs/cyber/evidencias) |
+| Vídeo e prints do painel | `docs/cyber/evidencias/dashboard.webm`, `painel-*.png` |
+| Demonstração / gravação / ZIP | `scripts/demo-cyber.sh`, `scripts/gravar-painel.py`, `scripts/empacotar-cyber.py` |
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-... docker compose up -d --build   # sem a chave, o painel usa os textos offline
+./scripts/demo-cyber.sh
+```
 
 ---
 
