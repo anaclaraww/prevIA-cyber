@@ -490,6 +490,7 @@ oxigênio, quem faz hemodiálise) carrega o dado mais sensível do sistema. O m�
 | Item | Onde |
 | --- | --- |
 | Painel | `http://localhost:8081/painel/` |
+| Documentação dos 3 pontos (PDF) | [`docs/cyber/GlobalSolution-cyber.pdf`](docs/cyber/GlobalSolution-cyber.pdf) |
 | Auditoria (regras, evidências, decisões) | [`docs/cyber/auditoria.md`](docs/cyber/auditoria.md) |
 | Respostas HTTP, log e banco capturados | [`docs/cyber/evidencias/`](docs/cyber/evidencias) |
 | Vídeo e prints do painel | `docs/cyber/evidencias/dashboard.webm`, `painel-*.png` |
