@@ -3,6 +3,8 @@ using GlobalSolutionCitizenTech.Api.Erros;
 using GlobalSolutionCitizenTech.Privacidade.Taint;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using GlobalSolutionCitizenTech.Api.Seguranca;
 
 namespace GlobalSolutionCitizenTech.Api.Controllers;
 
@@ -27,6 +29,8 @@ public class AuthController(IEmissorToken emissor) : ControllerBase
     /// </remarks>
     [HttpPost("token")]
     [PermiteDadosSensiveis("O token JWT é a própria resposta do login.")]
+    [EnableRateLimiting(SegurancaExtensions.PoliticaLogin)]
+    [ProducesResponseType<ErroResponse>(StatusCodes.Status429TooManyRequests)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType<ErroResponse>(StatusCodes.Status401Unauthorized)]
     public TokenResponse GerarToken(TokenRequest request) => emissor.Emitir(request);

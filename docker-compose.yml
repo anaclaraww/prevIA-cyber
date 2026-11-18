@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: citizentech
       POSTGRES_PASSWORD: citizentech
     ports:
-      - "5434:5432"   # 5434 no host: 5432 é o Postgres local e 5433 o do stack de SOA
+      - "127.0.0.1:5434:5432"   # só nesta máquina; 5434 porque 5432 é o Postgres local e 5433 o do stack de SOA
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -35,7 +35,7 @@ services:
       # Tradução dos eventos de segurança pelo Claude. Sem chave, o painel usa os textos offline.
       Privacidade__Ia__ApiKey: "${ANTHROPIC_API_KEY:-}"
     ports:
-      - "8081:8080"   # 8081 no host: 8080 é a API do stack de SOA
+      - "127.0.0.1:8081:8080"   # só nesta máquina; 8081 porque 8080 é a API do stack de SOA
     depends_on:
       postgres:
         condition: service_healthy

@@ -80,7 +80,7 @@ docker compose up -d --build
 
 | O quê | Endereço |
 | --- | --- |
-| Swagger (documentação interativa) | http://localhost:8081/swagger |
+| Swagger (documentação interativa, só em Development) | http://localhost:8081/swagger |
 | API | http://localhost:8081/api/v1 |
 | Health check (API + banco) | http://localhost:8081/health |
 | PostgreSQL | `localhost:5434` · banco, usuário e senha `citizentech` |
@@ -492,6 +492,7 @@ oxigênio, quem faz hemodiálise) carrega o dado mais sensível do sistema. O m�
 | Painel | `http://localhost:8081/painel/` |
 | Documentação dos 3 pontos (PDF) | [`docs/cyber/GlobalSolution-cyber.pdf`](docs/cyber/GlobalSolution-cyber.pdf) |
 | Auditoria (regras, evidências, decisões) | [`docs/cyber/auditoria.md`](docs/cyber/auditoria.md) |
+| Endurecimento para rodar exposta (rate limit, cabeçalhos, CSP, teto de corpo, proxy confiável) | [`auditoria.md`, seção 8](docs/cyber/auditoria.md#8-endurecimento-da-api-para-rodar-exposta) |
 | Respostas HTTP, log e banco capturados | [`docs/cyber/evidencias/`](docs/cyber/evidencias) |
 | Vídeo e prints do painel | `docs/cyber/evidencias/dashboard.webm`, `painel-*.png` |
 | Demonstração / gravação / ZIP | `scripts/demo-cyber.sh`, `scripts/gravar-painel.py`, `scripts/empacotar-cyber.py` |

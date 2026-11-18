@@ -18,4 +18,6 @@ public static class CodigosErro
     public const string Duplicado = "DUPLICATE_RECORD";
     public const string ApiExterna = "EXTERNAL_API_ERROR";
     public const string Interno = "INTERNAL_SERVER_ERROR";
+    public const string MuitasRequisicoes = "TOO_MANY_REQUESTS";
+    public const string PayloadGrande = "PAYLOAD_TOO_LARGE";
 }

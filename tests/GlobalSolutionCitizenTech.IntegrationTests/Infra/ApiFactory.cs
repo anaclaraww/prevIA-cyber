@@ -76,6 +76,12 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Privacidade:CenariosDemonstracao", "true");
         builder.UseSetting("Privacidade:Ia:ApiKey", "");
 
+        // Swagger ligado (testes de documentação) e limites altos: todos os testes saem do mesmo "IP".
+        // Os testes de rate limit sobem um host próprio com limites baixos (SegurancaApiTests).
+        builder.UseSetting("Seguranca:ExporSwagger", "true");
+        builder.UseSetting("Seguranca:RateLimit:LoginPorMinuto", "100000");
+        builder.UseSetting("Seguranca:RateLimit:RequisicoesPorMinuto", "100000");
+
         builder.UseSetting("Simulador:Habilitado", "false");
         builder.UseSetting("Simulador:Cenario", "ChuvaForte");
         builder.UseSetting("Simulador:DuracaoMissaoSegundos", "0");

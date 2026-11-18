@@ -39,6 +39,8 @@ public static class AutenticacaoExtensions
                     RoleClaimType = ClaimTypes.Role,
                     NameClaimType = "sub",
                     ClockSkew = TimeSpan.Zero,
+                    // Só o algoritmo que a API emite: barra troca de algoritmo (alg "none" ou outro) no cabeçalho.
+                    ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
                 };
                 o.Events = new JwtBearerEvents
                 {
@@ -53,10 +55,10 @@ public static class AutenticacaoExtensions
                     OnForbidden = async context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        var perfil = context.HttpContext.User.FindFirstValue(ClaimTypes.Role);
+                        // Sem ecoar o perfil do token: quem recebe o 403 não precisa saber como a autorização é montada.
                         await context.Response.WriteAsJsonAsync(new ErroResponse(false, CodigosErro.SemPermissao,
                             "O perfil do token não tem permissão para esta operação.",
-                            $"Perfil atual: {perfil}.", context.HttpContext.TraceIdentifier));
+                            null, context.HttpContext.TraceIdentifier));
                     },
                 };
             });

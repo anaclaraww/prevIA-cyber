@@ -211,3 +211,33 @@ Painel: `http://localhost:8081/painel/` (login `admin` / `admin-demo-2026`, cred
   nenhum hoje).
 - Os eventos ficam numa fila em memória (1.000 posições): em um reinício, eventos ainda não gravados se perdem.
   O bloqueio em si nunca depende da fila, que só alimenta o painel.
+
+## 8. Endurecimento da API para rodar exposta
+
+Os três pontos acima protegem o dado pessoal. Para a API rodar fora do localhost, ela também precisa resistir a
+abuso. Fica em `src/GlobalSolutionCitizenTech.Api/Seguranca/`, configurado pela seção `Seguranca` do appsettings,
+e entra no pipeline antes de tudo (`app.UseSegurancaApi()`), para recusar barato.
+
+| Controle | Como | Por quê |
+| --- | --- | --- |
+| Rate limit no login | 5 tentativas por IP por minuto em `POST /api/v1/auth/token`; depois, `429 TOO_MANY_REQUESTS` com `Retry-After` | Freia força bruta de credenciais (OWASP API4:2023). Enquanto a janela não vira, nem o segredo certo passa |
+| Rate limit geral | 120 requisições por IP por minuto, somando todas as rotas (`/health` fica de fora, é o probe do orquestrador) | Consumo irrestrito de recursos (OWASP API4:2023): cada requisição passa por buffer e pelo motor de PII |
+| Teto do corpo | 1 MB, com `Content-Length` (recusa antes de ler) e sem ele (o Kestrel corta na leitura): `413 PAYLOAD_TOO_LARGE` | O motor de PII só varre até 1 MB. Antes, um JSON maior chegava ao controller sem passar pelo taint analysis |
+| Cabeçalhos de segurança | `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Cross-Origin-Opener-Policy` e `Cross-Origin-Resource-Policy: same-origin`, `Permissions-Policy` | OWASP Secure Headers Project. `X-XSS-Protection` fica de fora: está descontinuado |
+| Content-Security-Policy | `default-src 'self'`, sem `unsafe-inline`, `frame-ancestors 'none'`. O CSS e o JS do painel saíram do HTML para `painel.css` e `painel.js` | Um script injetado no painel não roda, e o painel não pode ser embutido em iframe de outro site (clickjacking) |
+| `Cache-Control: no-store` em `/api` | Toda resposta da API | Resposta com dado pessoal, mesmo mascarado, não fica em cache de proxy ou navegador (OWASP REST Security) |
+| Sem `Server: Kestrel` | `AddServerHeader = false` | Não entrega a tecnologia do servidor de graça |
+| HSTS | 365 dias, com subdomínios, fora de Development | Depois do primeiro acesso por HTTPS, o navegador não volta a usar HTTP |
+| Proxy confiável | `Seguranca:ProxiesConfiaveis` (IPs ou CIDR). Só deles a API aceita `X-Forwarded-For`/`X-Forwarded-Proto` | Atrás de um gateway, o rate limit precisa do IP real do cliente; aceitar o cabeçalho de qualquer um deixaria o cliente forjar o próprio IP e escapar do limite |
+| JWT com algoritmo fixo | `ValidAlgorithms = [HS256]` | Barra token com `alg: none` ou com outro algoritmo no cabeçalho |
+| 403 sem detalhe | O erro não diz mais qual é o perfil do token | Quem recebe o 403 não precisa saber como a autorização é montada |
+| Swagger desligado por padrão | `Seguranca:ExporSwagger`, ligado só no `appsettings.Development.json`; sem ele, `/` leva ao painel | A documentação lista todas as rotas e esquemas. A versão pública fica no GitHub Pages, sem servidor por trás |
+| Portas só no localhost | `127.0.0.1:8081` e `127.0.0.1:5434` no `docker-compose.yml` | Antes, API e banco (com senha `citizentech`) ficavam acessíveis a qualquer máquina da rede |
+
+O CORS continua sem configuração de propósito: sem `Access-Control-Allow-Origin`, o navegador bloqueia chamadas
+de outros sites. Se um front em outro domínio precisar consumir a API, a liberação deve ser por lista explícita de
+origens.
+
+Testes: `tests/GlobalSolutionCitizenTech.IntegrationTests/SegurancaApiTests.cs` (cabeçalhos em resposta normal, de
+erro e de 429; rate limit do login e geral; 413; Swagger desligado; JWT com `alg: none` e com outro algoritmo;
+403 sem perfil).

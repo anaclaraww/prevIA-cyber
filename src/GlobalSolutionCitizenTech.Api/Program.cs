@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using GlobalSolutionCitizenTech.Api.Autenticacao;
 using GlobalSolutionCitizenTech.Api.Erros;
+using GlobalSolutionCitizenTech.Api.Seguranca;
 using GlobalSolutionCitizenTech.Api.Simulacao;
 using GlobalSolutionCitizenTech.Application;
 using GlobalSolutionCitizenTech.Infrastructure;
@@ -9,6 +10,7 @@ using GlobalSolutionCitizenTech.Privacidade;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +39,7 @@ builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAutenticacaoJwt(builder.Configuration);
 builder.Services.AddPrivacidade(builder.Configuration);
+builder.Services.AddSegurancaApi(builder.Configuration);
 builder.Services.AddHostedService<SimuladorBackgroundService>();
 
 builder.Services.AddHealthChecks()
@@ -75,6 +78,9 @@ var app = builder.Build();
 app.ValidarConfiguracaoJwt();
 await PrepararBancoAsync(app);
 
+// Cabeçalhos de segurança, teto de corpo e rate limit: antes de tudo, para recusar barato.
+app.UseSegurancaApi();
+
 // Privacidade por fora do tratamento de erros: o envelope de erro também é inspecionado antes de sair.
 app.UsePrivacidade();
 app.UseMiddleware<TratamentoErrosMiddleware>();
@@ -83,18 +89,23 @@ app.UseMiddleware<TratamentoErrosMiddleware>();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+// Swagger só com Seguranca:ExporSwagger (dev): fora disso a raiz leva ao painel.
+var exporSwagger = app.Services.GetRequiredService<IOptions<ConfiguracaoSeguranca>>().Value.ExporSwagger;
+if (exporSwagger)
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GlobalSolutionCitizenTech API v1");
-    c.DocumentTitle = "GlobalSolutionCitizenTech API";
-    c.EnablePersistAuthorization();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GlobalSolutionCitizenTech API v1");
+        c.DocumentTitle = "GlobalSolutionCitizenTech API";
+        c.EnablePersistAuthorization();
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription().AllowAnonymous();
+app.MapGet("/", () => Results.Redirect(exporSwagger ? "/swagger" : "/painel/")).ExcludeFromDescription().AllowAnonymous();
 app.MapHealthChecks("/health").AllowAnonymous();
 app.MapControllers();
 
